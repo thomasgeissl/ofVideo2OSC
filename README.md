@@ -4,8 +4,3 @@ It is meant be used with wekinator.
 
 ## status
 This is a work in progress. Color tracking is broken.
-
-## TODOs
-* test camera selector
-* fix color tracking
-* brewify it
