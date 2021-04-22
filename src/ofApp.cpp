@@ -31,7 +31,7 @@ void ofApp::setup(){
     _threshold.addListener(this, &ofApp::onThresholdChanged);
     _threshold.set("threshold", 128,0, 255);
     _minArea.set("minArea", 10,0,255);
-    _maxArea.set("maxArea", 80,0,255);
+    _maxArea.set("maxArea", 150,0,255);
     _trackHueSaturation.set("trackHueSaturation", false);
 
 
@@ -52,8 +52,6 @@ void ofApp::update(){
             contour.setMinAreaRadius(_minArea);
             contour.setMaxAreaRadius(_maxArea);
             contour.findContours(_grabber);
-            ofLogNotice() << "size " << contour.size();
-            // ofLogNotice() << contour.size();
         }
     }
 }
@@ -153,7 +151,12 @@ void ofApp::draw(){
                     _color = ofColor(col[0]*255, col[1]*255, col[2]*255);
                 }
             }
-
+            {
+                bool value = _trackHueSaturation;
+                if(ImGui::Checkbox(_trackHueSaturation.getName().c_str(), &value)) {
+                    _trackHueSaturation = value;
+                }
+            }
             {
                 int value = _threshold;
                 if(ImGui::InputInt(_threshold.getName().c_str(), &value)){
@@ -257,7 +260,6 @@ void ofApp::onThresholdChanged(int & value){
     contour.setThreshold(_threshold);
 }
 void ofApp::onDeviceIdChanged(int & value){
-    ofLogNotice("device id has changed");
     _grabber.close();
     _grabber.setDeviceID(_videoDeviceId);
     _grabber.setup(_width, _height);
