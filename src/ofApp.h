@@ -9,6 +9,11 @@ enum Mode {
 	SCALEDOWN,
 	BLOBTRACKER
 };
+enum ColorMode {
+	RGB,
+	LIGHTNESS,
+	SATURATION,
+};
 
 class ofApp : public ofBaseApp{
 	public:
@@ -47,6 +52,7 @@ class ofApp : public ofBaseApp{
 
 		ofParameter<int> _width;
 		ofParameter<int> _height;
+		ofParameter<int> _colorMode;
 
 		ofxCv::ContourFinder contour;
   		ofParameter<ofColor> _color;

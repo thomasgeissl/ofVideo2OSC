@@ -26,6 +26,7 @@ void ofApp::setup(){
 
     _width.set("width", 10, 1, 20);
     _height.set("height", 10, 1, 20);
+    _colorMode.set("colorMode", 0, 0, 2);
 
     _color.set("color", ofColor(0, 255, 0));
     _threshold.addListener(this, &ofApp::onThresholdChanged);
@@ -142,6 +143,31 @@ void ofApp::draw(){
                     _height = value;
                 }
             }
+            {
+                std::vector<std::string> modeLabels= {"RGB", "Lightness", "Saturation"};
+                if (ImGui::BeginCombo("colorMode", modeLabels[_colorMode].c_str()))
+                {
+                    if (ImGui::Selectable("RGB", _colorMode == ColorMode::RGB)){
+                        _colorMode = ColorMode::RGB;
+                    }
+                    if (_colorMode == ColorMode::RGB){
+                        ImGui::SetItemDefaultFocus();
+                    }
+                    if (ImGui::Selectable("Lightness", _colorMode == ColorMode::LIGHTNESS)){
+                        _colorMode = ColorMode::LIGHTNESS;
+                    }
+                    if (_colorMode == ColorMode::LIGHTNESS){
+                        ImGui::SetItemDefaultFocus();
+                    }
+                    if (ImGui::Selectable("Saturation", _colorMode == ColorMode::SATURATION)){
+                        _colorMode = ColorMode::SATURATION;
+                    }
+                    if (_colorMode == ColorMode::SATURATION){
+                        ImGui::SetItemDefaultFocus();
+                    }
+                    ImGui::EndCombo();
+                }
+            }
         }
         if(_mode == Mode::BLOBTRACKER){
             {
@@ -234,9 +260,15 @@ void ofApp::sendPixels(){
     for(auto x = 0; x < _pixels.getWidth(); x++){
         for(auto y = 0; y < _pixels.getHeight(); y++){
             auto color = _pixels.getColor(x, y);
-            msg.addFloatArg(color.r);
-            msg.addFloatArg(color.g);
-            msg.addFloatArg(color.b);
+            if(_colorMode == ColorMode::RGB){
+                msg.addFloatArg(color.r);
+                msg.addFloatArg(color.g);
+                msg.addFloatArg(color.b);
+            }else if(_colorMode == ColorMode::LIGHTNESS){
+                msg.addFloatArg(color.getLightness());
+            }else if(_colorMode == ColorMode::SATURATION){
+                msg.addFloatArg(color.getSaturation());
+            }
         }
     }
     _oscSender.sendMessage(msg);
